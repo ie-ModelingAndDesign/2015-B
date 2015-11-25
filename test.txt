@@ -1,1 +1,7 @@
+<<<<<<< HEAD
 test!
+=======
+test
+
+test2
+>>>>>>> e15f9fba3f1be7215d9e7d377cf5091c1963b457
