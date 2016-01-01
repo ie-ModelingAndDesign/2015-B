@@ -4,6 +4,6 @@
 use_frameworks!
 
 target 'KyoujuApp' do
-    pod 'RealmSwift’
+    pod 'RealmSwift'
 end
 

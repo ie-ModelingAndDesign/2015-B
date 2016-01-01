@@ -2,79 +2,85 @@
 //  ViewController.swift
 //  KyoujuApp
 //
-//  Created by 與世山 喬基 on 2015/12/28.
+//  Created by 與世山 喬基 on 2015/12/01.
 //  Copyright © 2015年 與世山 喬基. All rights reserved.
 //
 
 import UIKit
 import RealmSwift
 
-class ViewController: UIViewController {
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var addButton: UIButton!
     
-    // デフォルトの Realm インスタンスを取得する
+    // Relamのインスタンスを取得
     let realm = try! Realm()
     
-    // DB 内の日記データが格納されるリスト(日付新しいもの順でソート：降順)。以降内容をアップデートするとリスト内は自動的に更新される。
-    let dataArray = try! Realm().objects(Task).sorted("date", ascending: false)
+    // 登録するタスクを格納するリスト(〆切が近い順でソート)
+    let dataArray = try! Realm().objects(Task).sorted("date", ascending: true)
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
     }
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
     }
-    
-    // 入力画面から戻ってきた時に TableView を更新させる
+
+    // 入力画面から戻って来たらテーブルを更新する
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
         tableView.reloadData()
     }
     
-    // segue で画面遷移するに呼ばれる
+    // 画面遷移するときのイベント
+    // セルが押されたらタスクを表示
+    // 追加ボタンが押されたら空のタスク画面を表示
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?){
         let inputViewController:InputViewController = segue.destinationViewController as! InputViewController
-        
         if segue.identifier == "cellSegue" {
             let indexPath = self.tableView.indexPathForSelectedRow
             inputViewController.task = dataArray[indexPath!.row]
         } else {
             let task = Task()
-            task.title = "タイトル"
-            task.body = "本文"
             if dataArray.count != 0 {
                 task.id = dataArray.max("id")! + 1
             }
-            
             inputViewController.task = task
         }
     }
     
-    // MARK: UITableViewDataSource プロトコルのメソッド
-    // TableView の各セクションのセルの数を返す
+    // UITableViewDataSourceプロトコルのメソッド
+    // TableViewの各セクションのセルの数を返す
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return dataArray.count
     }
     
     // 各セルの内容を返す
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        // 再利用可能な cell を得る
+        // 再利用可能なcellを得る
         let cell: UITableViewCell = UITableViewCell(style: UITableViewCellStyle.Subtitle, reuseIdentifier: "Cell")
-        
-        // Cellに値を設定する.
+
+        // cellに値を設定する.
         let object = dataArray[indexPath.row]
+        
+        // 日付のフォーマットを生成
+        let dateFormatter: NSDateFormatter = NSDateFormatter()
+        dateFormatter.locale = NSLocale(localeIdentifier:"ja_JP")
+        dateFormatter.dateFormat = "yyyy年MM月dd日(EEE)"
+        
+        // 日付のフォーマットに則って〆切期日を取得
+        let dateLimit: NSString = dateFormatter.stringFromDate(object.date)
+        
+        // 各セルにレポート名と〆切を表示
         cell.textLabel?.text = object.title
-        cell.detailTextLabel?.text = object.date.description
+        cell.detailTextLabel?.text = "〆切：\(dateLimit)"
         return cell
     }
     
-    // MARK: UITableViewDataSource プロトコルのメソッド
-    // Delete ボタンが押された時の処理を行う
+    // UITableViewDataSourceプロトコルのメソッド
+    // Deleteボタンが押された時の処理を行う
     func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         if editingStyle == UITableViewCellEditingStyle.Delete {
             try! realm.write {
@@ -89,6 +95,9 @@ class ViewController: UIViewController {
         return UITableViewCellEditingStyle.Delete;
     }
     
-    
+    // 各セルを選択したときに実行される
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        performSegueWithIdentifier("cellSegue",sender: nil)
+    }
 }
 

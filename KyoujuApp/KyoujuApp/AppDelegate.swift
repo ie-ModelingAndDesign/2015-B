@@ -2,7 +2,7 @@
 //  AppDelegate.swift
 //  KyoujuApp
 //
-//  Created by 與世山 喬基 on 2015/12/28.
+//  Created by 與世山 喬基 on 2015/12/01.
 //  Copyright © 2015年 與世山 喬基. All rights reserved.
 //
 
