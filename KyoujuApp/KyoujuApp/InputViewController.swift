@@ -28,8 +28,9 @@ class InputViewController: UIViewController, UITextFieldDelegate {
         
         let dateFormatter: NSDateFormatter = NSDateFormatter()
         dateFormatter.locale = NSLocale(localeIdentifier:"ja_JP")
-        dateFormatter.dateFormat = "yyyy年MM月dd日(EEE)"
-
+        dateFormatter.dateStyle = .LongStyle
+        dateFormatter.timeStyle = .ShortStyle
+        
         let dateLimit: NSString = dateFormatter.stringFromDate(task.date)
         
         // 各セルが押されたときは、各セルの内容をテキストフィールドに表示
@@ -50,7 +51,7 @@ class InputViewController: UIViewController, UITextFieldDelegate {
         // DatePickerを設定
         datePicker.frame = CGRectMake(0, 50, self.view.frame.width, 200)
         datePicker.timeZone = NSTimeZone.localTimeZone()
-        datePicker.datePickerMode = UIDatePickerMode.Date
+        //datePicker.datePickerMode = UIDatePickerMode.Date
         datePicker.backgroundColor = UIColor.whiteColor()
         datePicker.layer.cornerRadius = 5.0
         datePicker.layer.shadowOpacity = 0.5
@@ -117,7 +118,7 @@ class InputViewController: UIViewController, UITextFieldDelegate {
         // 日付のフォーマットを生成.
         let dateFormatter: NSDateFormatter = NSDateFormatter()
         dateFormatter.locale = NSLocale(localeIdentifier:"ja_JP")
-        dateFormatter.dateFormat = "yyyy年MM月dd日(EEE)"
+        dateFormatter.dateFormat = "yyyy年MM月dd日(EEE) HH:mm"
         
         // 日付をフォーマットに則って取得.
         let selectedDate: NSString = dateFormatter.stringFromDate(sender.date)
@@ -172,7 +173,7 @@ class InputViewController: UIViewController, UITextFieldDelegate {
                 try! realm.write {
                     let dateFormatter: NSDateFormatter = NSDateFormatter()
                     dateFormatter.locale = NSLocale(localeIdentifier:"ja_JP")
-                    dateFormatter.dateFormat = "yyyy年MM月dd日(EEE)"
+                    dateFormatter.dateFormat = "yyyy年MM月dd日(EEE) HH:mm"
                     
                     let taskLimit = dateFormatter.dateFromString(self.dateTextField.text!)
                     
@@ -181,6 +182,38 @@ class InputViewController: UIViewController, UITextFieldDelegate {
                     self.task.date = NSDate(timeInterval: 0, sinceDate: taskLimit!)
                     self.realm.add(self.task, update: true)
                 }
+                
+                // 通知設定
+                
+                let dateFormatter: NSDateFormatter = NSDateFormatter()
+                dateFormatter.locale = NSLocale(localeIdentifier:"ja_JP")
+                dateFormatter.timeZone = NSTimeZone.localTimeZone()
+                dateFormatter.dateFormat = "yyyy年MM月dd日(EEE) HH:mm"
+                let taskLimit = dateFormatter.dateFromString(self.dateTextField.text!)
+                
+                // 通知のメッセージ(仮)
+                let kyouju: [String] = ["お兄ちゃん", "課題DA☆", "じぇろ", "進捗どう？"]
+                let ret = Int(arc4random_uniform(4))
+                
+                // 通知のインスタンス生成
+                let notification = UILocalNotification()
+                notification.alertBody = kyouju[ret]
+                
+                // 通知の時間を設定
+                //notification.fireDate = NSDate(timeInterval: 15, sinceDate: taskLimit!)  // Test
+                notification.fireDate = NSDate(timeInterval: -259200, sinceDate: taskLimit!)  // 3日前に通知
+                //notification.fireDate = NSDate(timeInterval: -86400, sinceDate: taskLimit!)  // 1日前に通知
+                notification.timeZone = NSTimeZone.localTimeZone()
+                notification.soundName = UILocalNotificationDefaultSoundName
+                
+                // アイコンバッジは非表示
+                notification.applicationIconBadgeNumber = 0
+                
+                // ID割り振り
+                notification.userInfo = ["notifyId": "ranking_update"]
+                
+                // 登録
+                UIApplication.sharedApplication().scheduleLocalNotification(notification)
             }
         }
         // 入力画面を閉じ、前の画面に遷移する

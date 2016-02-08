@@ -16,6 +16,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        
+        // push通知許可設定
+        UIApplication.sharedApplication().registerForRemoteNotifications()
+        
         return true
     }
 
@@ -40,6 +44,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
+    
+    func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
+        // アプリがActiveな状態で通知を発生させた場合にも呼ばれるのでActiveでない場合のみ実行するように
+        if application.applicationState != .Active {
+            localPushRecieve(application, notification: notification)
+        }
+    }
+    
+    func localPushRecieve(application: UIApplication, notification: UILocalNotification) {
+            // 通知領域からこの通知を削除
+            application.cancelLocalNotification(notification)
+    }
+
 
 
 }

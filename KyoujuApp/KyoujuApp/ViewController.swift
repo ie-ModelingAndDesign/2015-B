@@ -68,7 +68,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // 日付のフォーマットを生成
         let dateFormatter: NSDateFormatter = NSDateFormatter()
         dateFormatter.locale = NSLocale(localeIdentifier:"ja_JP")
-        dateFormatter.dateFormat = "yyyy年MM月dd日(EEE)"
+        dateFormatter.dateStyle = .LongStyle
+        dateFormatter.timeStyle = .ShortStyle
         
         // 日付のフォーマットに則って〆切期日を取得
         let dateLimit: NSString = dateFormatter.stringFromDate(object.date)
