@@ -1,0 +1,34 @@
+// This file was generated based on '/Users/shintarooo0079/Desktop/MyFirstProject/.uno/Okazaki.g.uno'.
+// WARNING: Changes might be lost if you edit this file directly.
+
+#pragma once
+#include <Fuse.Animations.IResize.h>
+#include <Fuse.Controls.Panel.h>
+#include <Fuse.IActualPlacement.h>
+#include <Fuse.IDataContext.h>
+#include <Fuse.IObjectContainer.h>
+#include <Fuse.Navigation.INavigationPanel.h>
+#include <Fuse.Scripting.INameScope.h>
+#include <Fuse.Triggers.Actions.ICollapse.h>
+#include <Fuse.Triggers.Actions.IHide.h>
+#include <Fuse.Triggers.Actions.IShow.h>
+namespace g{struct Okazaki;}
+
+namespace g{
+
+// public partial sealed class Okazaki :1
+// {
+::g::Fuse::Controls::ParentControl_type* Okazaki_typeof();
+void Okazaki__ctor_5_fn(Okazaki* __this);
+void Okazaki__InitializeUX_fn(Okazaki* __this);
+void Okazaki__New3_fn(Okazaki** __retval);
+
+struct Okazaki : ::g::Fuse::Controls::Panel
+{
+    void ctor_5();
+    void InitializeUX();
+    static Okazaki* New3();
+};
+// }
+
+} // ::g
